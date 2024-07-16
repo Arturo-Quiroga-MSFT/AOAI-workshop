@@ -1,56 +1,41 @@
 // General params
 param location string = resourceGroup().location
+param sqllocation string = 'eastus2'
 
 // SQL Server params
-param serverName string = 'sqlserver-${uniqueString(resourceGroup().id)}'
-param databaseName string = 'aworks'
-param adminLogin string = 'SqlAdmin'
+param serverName string = 'aqsqlserver-${uniqueString(resourceGroup().id)}'
+param databaseName string = 'aqaworks'
+param adminLogin string = 'arturoqu'
 @secure()
-param adminPassword string = 'ChangeYourAdminPassword1'
+param adminPassword string = '@DoNotTryThis.1970!'
 
 // Speech Service params
 param SpeechServiceName string = 'aispeech-${uniqueString(resourceGroup().id)}'
-param speech_location string = 'westeurope'
-param vision_location string = 'northeurope'
+param speech_location string = 'eastus'
+param vision_location string = 'eastus'
 
 // OpenAI params
 param OpenAIServiceName string = 'openai-${uniqueString(resourceGroup().id)}'
 param openai_deployments array = [
   {
-    name: 'text-embedding-ada-002'
-	  model_name: 'text-embedding-ada-002'
-    version: '2'
+    name: 'text-embedding-3-large'
+	  model_name: 'text-embedding-3-large'
+    version: '1'
     raiPolicyName: 'Microsoft.Default'
-    sku_capacity: 20
+    sku_capacity: 100
     sku_name: 'Standard'
   }
   {
-    name: 'gpt-35-turbo-16k'
-	  model_name: 'gpt-35-turbo-16k'
-    version: '0613'
+    name: 'gpt-4o'
+	  model_name: 'gpt-4o'
+    version: '2024-05-13'
     raiPolicyName: 'Microsoft.Default'
-    sku_capacity: 20
-    sku_name: 'Standard'
-  }
-  {
-    name: 'gpt-4'
-	  model_name: 'gpt-4'
-    version: '1106-Preview'
-    raiPolicyName: 'Microsoft.Default'
-    sku_capacity: 20
-    sku_name: 'Standard'
-  }
-  {
-    name: 'gpt-4'
-	  model_name: 'gpt-v'
-    version: 'vision-preview'
-    raiPolicyName: 'Microsoft.Default'
-    sku_capacity: 20
+    sku_capacity: 100
     sku_name: 'Standard'
   }
   {
     name: 'dall-e-3'
-	  model_name: 'dall-e-3'
+	  model_name: 'Dalle3'
     version: '3.0'
     raiPolicyName: 'Microsoft.Default'
     sku_capacity: 1
@@ -66,7 +51,7 @@ param aivision_name string = 'aivision-${uniqueString(resourceGroup().id)}'
 
 resource sqlServer 'Microsoft.Sql/servers@2021-02-01-preview' = {
   name: serverName
-  location: location
+  location: sqllocation
   identity: {
     type: 'SystemAssigned'
   }
@@ -88,7 +73,7 @@ resource sqlServerFirewallRules 'Microsoft.Sql/servers/firewallRules@2020-11-01-
 resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-02-01-preview' = {
   name: databaseName
   parent: sqlServer
-  location: location
+  location: sqllocation
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     sampleName: 'AdventureWorksLT'
